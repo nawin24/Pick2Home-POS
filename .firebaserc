@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "pick2home-1"
+  },
+  "targets": {
+    "pick2home-1": {
+      "hosting": {
+        "pos": [
+          "pick2home-pos"
+        ]
+      }
+    }
+  }
+}

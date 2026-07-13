@@ -1,0 +1,183 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // --- 1. HELPERS ---
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isPlatformAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isStoreAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/store_admins/$(request.auth.uid));
+    }
+    
+    function isDeliveryPartner() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/delivery_partners/$(request.auth.uid));
+    }
+
+    // --- 2. USER DATA & WALLET ---
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isPlatformAdmin() || isStoreAdmin());
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isAuthenticated() && request.auth.uid == userId 
+                   && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['walletBalance']);
+      allow delete: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    match /users/{userId}/wallet_transactions/{transactionId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isPlatformAdmin() || isStoreAdmin());
+      allow write: if false;
+    }
+
+    match /users/{userId}/cart/{productId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    match /users/{userId}/addresses/{addressId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    match /users/{userId}/notifications/{notificationsId} {
+      allow read, update, delete: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // --- 3. ADMIN & INVITATIONS ---
+    match /admins/{uid} {
+      allow read: if isAuthenticated() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    match /store_admins/{uid} {
+      allow read: if isAuthenticated() && (request.auth.uid == uid || isPlatformAdmin());
+      allow create: if isAuthenticated() && request.auth.uid == uid;
+      allow update, delete: if isPlatformAdmin();
+    }
+
+    match /store_admin_invites/{phone} {
+      allow read, delete: if isAuthenticated(); 
+      allow create, update: if isPlatformAdmin();
+    }
+
+    // --- 4. DELIVERY PARTNERS ---
+    match /delivery_partner_invites/{phone} {
+      allow create, update: if isPlatformAdmin() || isStoreAdmin();
+      allow read, delete: if isAuthenticated(); 
+    }
+
+    match /delivery_partners/{uid} {
+      allow read: if isAuthenticated(); 
+      allow create: if isAuthenticated() && request.auth.uid == uid;
+      allow update: if (isAuthenticated() && request.auth.uid == uid) || isPlatformAdmin() || isStoreAdmin();
+
+      match /wallet_transactions/{transactionId} {
+        allow read: if isAuthenticated() && (request.auth.uid == uid || isPlatformAdmin() || isStoreAdmin());
+        allow create: if isAuthenticated() && request.auth.uid == uid; 
+        allow update, delete: if false;
+      }
+    }
+
+    // --- 5. BUSINESS & INVENTORY DATA ---
+    match /products/{productId} {
+      allow read: if true; 
+      allow write: if isPlatformAdmin() || isStoreAdmin();
+    }
+
+    match /store_inventory/{docId} {
+      allow read: if true; 
+      allow write: if isPlatformAdmin() || isStoreAdmin();
+    }
+
+    match /categories/{allPaths=**} {
+      allow read: if true;
+      allow write: if isPlatformAdmin() || isStoreAdmin();
+    }
+    
+    match /subCategories/{allPaths=**} {
+      allow read: if true;
+      allow write: if isPlatformAdmin() || isStoreAdmin();
+    }
+
+    match /stores/{storeId} {
+      allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+    match /stores/{storeId}/notifications/{notifId} {
+      allow read, update: if isAuthenticated() && (isPlatformAdmin() || isStoreAdmin());
+      allow delete: if (isPlatformAdmin() || isStoreAdmin());
+    }
+
+    // --- 6. ORDERS ---
+    match /orders/{orderId} {
+      allow read: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid || 
+        isPlatformAdmin() || 
+        isStoreAdmin() ||
+        (isDeliveryPartner() && (
+          resource.data.deliveryPartnerId == request.auth.uid || 
+          (resource.data.deliveryPartnerId == null && (resource.data.status == 'packing' || resource.data.status == 'ready'))
+        ))
+      );
+      
+      allow create: if isAuthenticated();
+      
+      allow update: if isPlatformAdmin() || isStoreAdmin() || 
+        (isDeliveryPartner() && (
+          (resource.data.deliveryPartnerId == null && (resource.data.status == 'packing' || resource.data.status == 'ready')) ||
+          (resource.data.deliveryPartnerId == request.auth.uid)
+        ));
+    }
+    
+    match /admin_notifications/{notifId} {
+      allow read, update: if isPlatformAdmin() || isStoreAdmin();
+      allow delete: if isPlatformAdmin();
+    }
+    
+    match /payments/{paymentId} {
+      allow read: if isPlatformAdmin() || isStoreAdmin();
+    }
+    
+    match /service_regions/{regionId} {
+      allow read: if true; 
+      allow write, update, delete: if isPlatformAdmin();
+    }
+    
+    match /banners/{bannerId} {
+      allow read: if true;
+      allow write, update, delete: if isPlatformAdmin() || isStoreAdmin();
+    }
+
+    // --- 7. POS APP (pick2home-pos, Next.js) ---
+    // These collections are read/written by firebase/functions/index.js
+    // (onPosBillCreated, getPosDailySummary, closePosSession, checkLowStock)
+    // and, on the write side, only ever via the Admin SDK — either from
+    // the Cloud Functions themselves or from the POS Next.js server (whose
+    // own auth is a custom JWT cookie, not Firebase Auth, so it never
+    // authenticates against these rules — it bypasses them entirely).
+    //
+    // No client (Flutter app or POS browser) should read/write these
+    // directly, so writes stay fully closed. Reads are opened only to
+    // staff/admins in case a future admin dashboard needs to display them.
+    match /pos_bills/{billId} {
+      allow read: if isPlatformAdmin() || isStoreAdmin();
+      allow write: if false; // Admin SDK / onPosBillCreated only
+    }
+
+    match /pos_daily_summary/{dateId} {
+      allow read: if isPlatformAdmin() || isStoreAdmin();
+      allow write: if false; // Admin SDK only
+    }
+
+    match /pos_sessions/{sessionId} {
+      allow read: if isAuthenticated() &&
+        (isPlatformAdmin() || isStoreAdmin() || resource.data.staffId == request.auth.uid);
+      allow write: if false; // Admin SDK / closePosSession callable only
+    }
+  }
+}

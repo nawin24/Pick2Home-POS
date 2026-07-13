@@ -1,0 +1,74 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isPlatformAdmin() {
+      return isAuthenticated() && 
+        firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid));
+    }
+
+    // Products folder: Public read, Authenticated write for admins/migration
+    match /products/{allPaths=**} {
+      allow read: if true; 
+      allow write: if isPlatformAdmin();
+    }
+
+    // POS app (pick2home-pos, Next.js) product/menu images.
+    // Written via /api/uploads → src/lib/storage.ts using the Admin SDK,
+    // which bypasses these rules entirely — the POS server's own JWT auth
+    // already gates who can call that endpoint (ADMIN/MANAGER only).
+    // This rule is a safety net for any direct client access: public read
+    // (images are shown in the POS UI and served via download-token URLs
+    // regardless of this rule), write locked to platform admins only.
+    match /menu/{allPaths=**} {
+      allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+    
+    // Categories folder: Public read
+    match /categories/{allPaths=**} {
+      allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+    
+    // Sub Categories folder: Public read
+    match /subCategories/{allPaths=**} {
+    	allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+
+    // Users folder: Private access (for future profile pictures)
+    match /profile_pics/{userId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    match /banners/{bannerId}/{allPaths=**} {
+    	allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+    
+    match /promotions/{allpaths=**} {
+    	allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+    
+    match /partners/{uid}/docs/{allPaths=**} {
+      allow write, read: if isAuthenticated() && request.auth.uid == uid;
+      allow read: if isPlatformAdmin();
+    }
+
+    // Standard User Private Folders
+    match /users/{userId}/{allPaths=**} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+		match /{allPaths=**} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}

@@ -1,0 +1,438 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// Auth & users
+// ───────────────────────────────────────────────────────────────────────────
+
+model User {
+  id           String      @id @default(cuid())
+  name         String
+  email        String      @unique
+  phone        String?
+  passwordHash String
+  role         String      // ADMIN | MANAGER | CASHIER 
+  active       Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  auditLogs    AuditLog[]
+  billsCreated Bill[]      @relation("BillCashier")
+  expenses     Expense[]
+  heldOrders   HeldOrder[]
+  loginHistory LoginHistory[] // NEW
+  purchases    Purchase[]  // Store keeper creates purchase orders
+}
+
+
+model LoginHistory {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  loginTime   DateTime @default(now())
+  logoutTime  DateTime?
+  ipAddress   String?
+  userAgent   String?
+  deviceInfo  String?
+  sessionId   String?
+  createdAt   DateTime @default(now())
+}
+// ───────────────────────────────────────────────────────────────────────────
+// Categories (Grocery Departments)
+// ───────────────────────────────────────────────────────────────────────────
+
+model Category {
+  id        String        @id @default(cuid())
+  name      String        @unique
+  icon      String?       // Emoji or icon for department
+  sortOrder Int           @default(0)
+  active    Boolean       @default(true)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  requiresManufacturing Boolean @default(false)
+  items     GroceryItem[]
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// Grocery Products (formerly MenuItem)
+// ───────────────────────────────────────────────────────────────────────────
+
+model GroceryItem {
+  id               String      @id @default(cuid())
+  name             String
+  sku              String      @unique
+  barcode          String?     @unique
+  description      String?
+  
+  // Pricing
+  price            Float
+  mrp              Float
+  gstPercent       Float       @default(5)
+  hsnCode          String?
+  
+  // Product Details
+  unit             String      @default("pcs")
+  weight           Float?
+  brand            String?
+  packaging        String?
+  
+  // Inventory Management
+  stockQuantity    Float       @default(0)
+  minStock         Float       @default(0)
+  maxStock         Float?
+  reorderPoint     Float       @default(5)
+  isPerishable     Boolean     @default(false)
+  
+  // Status
+  available        Boolean     @default(true)
+  featured         Boolean     @default(false)
+  discountEligible Boolean     @default(true)
+  discountPercent  Float       @default(0)
+  
+  imageUrl         String?
+  
+  // Relations
+  categoryId       String
+  category         Category    @relation(fields: [categoryId], references: [id])
+  
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  
+  // Opposite relations
+  orderItems       OrderItem[]
+  purchaseItems    PurchaseItem[]
+  inventoryItems   InventoryItem[] // ADD THIS - opposite relation for InventoryItem
+
+    // Manufacturing & Expiry Tracking (NEW)
+  manufacturedDate DateTime?   // Date of manufacture
+  expiryDate       DateTime?   // Date of expiry
+  batchNumber      String?     // Batch/Lot number
+  isManufactured   Boolean     @default(false) // Flag for manufactured items
+
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// Pickup Counters (formerly Tables)
+// ───────────────────────────────────────────────────────────────────────────
+
+model PickupCounter {
+  id           String        @id @default(cuid())
+  number       String        @unique
+  status       String        @default("AVAILABLE") // AVAILABLE | OCCUPIED
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  orders       Order[]
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// Customers
+// ───────────────────────────────────────────────────────────────────────────
+
+model Customer {
+  id            String        @id @default(cuid())
+  name          String
+  phone         String        @unique
+  email         String?
+  address       String?
+  gstNumber     String?
+  visits        Int           @default(0)
+  totalSpent    Float         @default(0)
+  loyaltyPoints Int           @default(0)
+  lastVisit     DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  bills         Bill[]
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// Orders (Sales)
+// ───────────────────────────────────────────────────────────────────────────
+
+model Order {
+  id           String      @id @default(cuid())
+  orderNumber  String      @unique
+  orderType    String      // WALKIN | DELIVERY | ONLINE
+  source       String      @default("POS") // POS | WEBSITE | APP | PHONE
+  externalRef  String?
+  
+  pickupCounterId String?
+  pickupCounter PickupCounter? @relation(fields: [pickupCounterId], references: [id])
+  
+  orderStatus  String      @default("PENDING") // PENDING | PROCESSING | READY | COMPLETED | CANCELLED
+  notes        String?
+  
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  
+  bill         Bill?
+  items        OrderItem[]
+}
+
+model OrderItem {
+  id             String      @id @default(cuid())
+  orderId        String
+  order          Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  groceryItemId  String
+  groceryItem    GroceryItem @relation(fields: [groceryItemId], references: [id])
+  
+  name           String
+  price          Float
+  quantity       Float
+  gstPercent     Float
+  discount       Float       @default(0)
+  weight         Float?
+  notes          String?
+  
+  createdAt      DateTime    @default(now())
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// Bills (Invoices)
+// ───────────────────────────────────────────────────────────────────────────
+
+model Bill {
+  id              String    @id @default(cuid())
+  billNumber      String    @unique
+  orderId         String    @unique
+  order           Order     @relation(fields: [orderId], references: [id])
+  
+  customerId      String?
+  customer        Customer? @relation(fields: [customerId], references: [id])
+  
+  cashierId       String
+  cashier         User      @relation("BillCashier", fields: [cashierId], references: [id])
+  
+  orderType       String
+  subtotal        Float
+  itemDiscount    Float     @default(0)
+  billDiscount    Float     @default(0)
+  cgst            Float     @default(0)
+  sgst            Float     @default(0)
+  totalGst        Float     @default(0)
+  packingCharge   Float     @default(0)
+  deliveryCharge  Float     @default(0)
+  roundOff        Float     @default(0)
+  grandTotal      Float
+  
+  paymentMethod   String
+  paymentCash     Float     @default(0)
+  paymentUpi      Float     @default(0)
+  paymentCard     Float     @default(0)
+  paymentOnline   Float     @default(0)
+  
+  couponCode      String?
+  couponDiscount  Float     @default(0)
+  loyaltyEarned   Int       @default(0)
+  loyaltyRedeemed Int       @default(0)
+  loyaltyValue    Float     @default(0)
+  
+  status          String    @default("PAID")
+  cancelReason    String?
+  refundAmount    Float     @default(0)
+  refundMethod    String?
+  
+  deliveryName    String?
+  deliveryPhone   String?
+  deliveryAddress String?
+  deliveryPartner String?
+  
+  itemCount       Int       @default(0) // Added field
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// Suppliers & Purchases
+// ───────────────────────────────────────────────────────────────────────────
+
+model Supplier {
+  id             String    @id @default(cuid())
+  name           String
+  phone          String
+  email          String?
+  address        String?
+  gstNumber      String?
+  contactPerson  String?
+  paymentTerms   String?
+  rating         Int       @default(0)
+  active         Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  purchases      Purchase[]
+}
+
+model Purchase {
+  id             String    @id @default(cuid())
+  poNumber       String    @unique
+  supplierId     String
+  supplier       Supplier  @relation(fields: [supplierId], references: [id])
+  
+  createdById    String
+  createdBy      User      @relation(fields: [createdById], references: [id])
+  
+  totalAmount    Float
+  paidAmount     Float     @default(0)
+  discountAmount Float     @default(0)
+  
+  status         String    @default("PENDING") // PENDING | RECEIVED | PARTIAL | CANCELLED
+  expectedDate   DateTime?
+  receivedDate   DateTime?
+  
+  notes          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  items          PurchaseItem[]
+}
+
+model PurchaseItem {
+  id             String    @id @default(cuid())
+  purchaseId     String
+  purchase       Purchase  @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  
+  groceryItemId  String
+  groceryItem    GroceryItem @relation(fields: [groceryItemId], references: [id])
+  
+  quantity       Float
+  costPrice      Float
+  totalCost      Float
+  receivedQuantity Float   @default(0)
+  notes          String?
+  
+  createdAt      DateTime  @default(now())
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// Expenses
+// ───────────────────────────────────────────────────────────────────────────
+
+model Expense {
+  id            String   @id @default(cuid())
+  title         String
+  category      String   // RENT | SALARY | ELECTRICITY | MAINTENANCE | OTHER
+  amount        Float
+  paymentMethod String   // CASH | UPI | CARD | BANK
+  notes         String?
+  date          DateTime @default(now())
+  
+  addedById     String
+  addedBy       User     @relation(fields: [addedById], references: [id])
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// Inventory Tracking
+// ───────────────────────────────────────────────────────────────────────────
+
+model InventoryItem {
+  id             String    @id @default(cuid())
+  groceryItemId  String?   // Link to grocery item
+  groceryItem    GroceryItem? @relation(fields: [groceryItemId], references: [id])
+  
+  name           String    @unique
+  unit           String
+  openingStock   Float     @default(0)
+  purchased      Float     @default(0)
+  used           Float     @default(0)
+  minStock       Float     @default(0)
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// Settings
+// ───────────────────────────────────────────────────────────────────────────
+
+model Settings {
+  id                   String   @id @default("singleton")
+  storeName            String   @default("Pick2Home")
+  storeType            String   @default("GROCERY")
+  logoUrl              String?
+  address              String   @default("123, Main Street, City")
+  phone                String   @default("+91 9876543210")
+  email                String   @default("hello@freshmart.com")
+  gstin                String   @default("22AAAAA0000A1Z5")
+  fssai                String?
+  currency             String   @default("INR")
+  defaultGst           Float    @default(5)
+  packingCharge        Float    @default(0)
+  deliveryCharge       Float    @default(0)
+  printSize            String   @default("80mm")
+  invoiceFooter        String   @default("Thank you for shopping with us!")
+  paymentQrUrl         String?
+  
+  allowCashierDiscount Boolean  @default(true)
+  allowCashierCancel   Boolean  @default(false)
+  allowStockAdjustment Boolean  @default(false)  // ← ADD THIS
+  
+  loyaltyEnabled       Boolean  @default(true)
+  loyaltyEarnRupees    Float    @default(100)
+  loyaltyRedeemValue   Float    @default(1)
+  loyaltyMinRedeem     Int      @default(50)
+  
+  allowOnlineOrders    Boolean  @default(true)
+  allowDelivery        Boolean  @default(true)
+  
+  lowStockThreshold    Int      @default(10)    // ← ADD THIS
+  autoReorderQty       Int      @default(50)    // ← ADD THIS
+  
+  updatedAt            DateTime @updatedAt
+}
+// ───────────────────────────────────────────────────────────────────────────
+// Coupons
+// ───────────────────────────────────────────────────────────────────────────
+
+model Coupon {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  description String?
+  type        String    // PERCENT | FLAT
+  value       Float
+  minOrder    Float     @default(0)
+  maxDiscount Float?
+  validFrom   DateTime  @default(now())
+  validUntil  DateTime?
+  usageLimit  Int?
+  usedCount   Int       @default(0)
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// Held Orders (Cart)
+// ───────────────────────────────────────────────────────────────────────────
+
+model HeldOrder {
+  id          String   @id @default(cuid())
+  note        String?
+  orderType   String
+  cartJson    String
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// Audit Logs
+// ───────────────────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  module    String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  details   String?
+  createdAt DateTime @default(now())
+}
