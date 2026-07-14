@@ -21,6 +21,7 @@
     }
   ],
   "hosting": {
+    "site": "p2h-app-pos",
     "target": "pos",
     "public": "public",
     "ignore": [
