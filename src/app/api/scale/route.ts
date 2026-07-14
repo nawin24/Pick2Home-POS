@@ -1,15 +1,35 @@
-import { NextRequest, NextResponse } from "next/server";
-import { SerialPort } from "serialport";
-import { ReadlineParser } from "@serialport/parser-readline";
+// import { NextRequest, NextResponse } from "next/server";
+// import { SerialPort } from "serialport";
+// import { ReadlineParser } from "@serialport/parser-readline";
 
-// Global state for the scale connection
+// // Global state for the scale connection
+// let globalScalePort: any = null;
+// let globalScaleParser: any = null;
+// let globalScaleData: any = null;
+// let globalScaleConnected = false;
+// let globalScaleReaders: any[] = [];
+// let scaleInterval: NodeJS.Timeout | null = null;
+// let currentWeight: number | null = null;
+
+
+
+
+import { NextRequest, NextResponse } from "next/server";
+
+// Keep your global state
 let globalScalePort: any = null;
 let globalScaleParser: any = null;
-let globalScaleData: any = null;
 let globalScaleConnected = false;
-let globalScaleReaders: any[] = [];
-let scaleInterval: NodeJS.Timeout | null = null;
 let currentWeight: number | null = null;
+let globalScaleReaders: any[] = [];  // ← ADD THIS
+let scaleInterval: NodeJS.Timeout | null = null;  // ← ADD THIS
+
+// Helper to load serialport when needed
+async function getSerialPortModules() {
+  const { SerialPort } = await import('serialport');
+  const { ReadlineParser } = await import('@serialport/parser-readline');
+  return { SerialPort, ReadlineParser };
+}
 
 // For WebSocket-like streaming (Server-Sent Events)
 export async function GET(req: NextRequest) {
@@ -64,6 +84,8 @@ export async function POST(req: NextRequest) {
 
 async function connectScale(portPath?: string) {
   try {
+
+    const { SerialPort, ReadlineParser } = await getSerialPortModules();
     // If already connected, return
     if (globalScaleConnected && globalScalePort) {
       return NextResponse.json({
@@ -129,6 +151,7 @@ async function connectScale(portPath?: string) {
     globalScaleParser = parser;
     globalScaleConnected = true;
     globalScaleReaders = [];
+    
 
     // Handle data
     parser.on('data', (data: string) => {

@@ -202,7 +202,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 //   if (data.price !== undefined) data.price = Number(data.price);
 //   if (data.gstPercent !== undefined) data.gstPercent = Number(data.gstPercent);
 //   if (data.prepTimeMinutes !== undefined) data.prepTimeMinutes = Number(data.prepTimeMinutes);
-//   const item = await prisma.menuItem.update({ where: { id: params.id }, data });
+//   const item = await prisma.GroceryItem.update({ where: { id: params.id }, data });
 //   await audit({ userId: auth.user.sub, module: "MENU", action: "UPDATE", details: { id: params.id } });
 //   return NextResponse.json({ item });
 // }
@@ -210,7 +210,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 // export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
 //   const auth = await requireAuth(["ADMIN", "MANAGER"]);
 //   if (!auth.ok) return auth.response;
-//   await prisma.menuItem.delete({ where: { id: params.id } });
+//   await prisma.GroceryItem.delete({ where: { id: params.id } });
 //   await audit({ userId: auth.user.sub, module: "MENU", action: "DELETE", details: { id: params.id } });
 //   return NextResponse.json({ ok: true });
 // }

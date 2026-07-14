@@ -8,20 +8,30 @@ export async function GET() {
       where: { active: true },
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     }),
-    prisma.menuItem.findMany({
+    prisma.groceryItem.findMany({
       where: { available: true },
       orderBy: { name: "asc" },
       select: {
-        id: true, name: true, description: true, price: true, gstPercent: true,
-        itemType: true, imageUrl: true, categoryId: true,
+        id: true, 
+        name: true, 
+        description: true, 
+        price: true, 
+        gstPercent: true,
+        // itemType: true, // ← REMOVE THIS - it doesn't exist
+        imageUrl: true, 
+        categoryId: true,
       },
     }),
-    prisma.settings.upsert({ where: { id: "singleton" }, update: {}, create: { id: "singleton" } }),
+    prisma.settings.upsert({ 
+      where: { id: "singleton" }, 
+      update: {}, 
+      create: { id: "singleton" } 
+    }),
   ]);
 
   return NextResponse.json({
     restaurant: {
-      name: settings.restaurantName,
+      name: settings.storeName,
       address: settings.address,
       phone: settings.phone,
     },

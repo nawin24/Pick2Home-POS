@@ -51,7 +51,7 @@ export async function PUT(req: NextRequest) {
   // CHANGED: Updated allowed fields for grocery
   const allow = [
     // Store info
-    "storeName",        // CHANGED: was restaurantName
+    "storeName",        // CHANGED: was storeName
     "storeType",        // NEW
     "logoUrl",
     "address",
@@ -155,7 +155,7 @@ export async function PUT(req: NextRequest) {
   //   const b = await req.json();
   //   const data: any = {};
   //   const allow = [
-  //     "restaurantName","logoUrl","address","phone","email","gstin","fssai",
+  //     "storeName","logoUrl","address","phone","email","gstin","fssai",
   //     "currency","defaultGst","packingCharge","serviceCharge","printSize",
   //     "invoiceFooter","paymentQrUrl","allowCashierDiscount","allowCashierCancel",
   //     "loyaltyEnabled","loyaltyEarnRupees","loyaltyRedeemValue","loyaltyMinRedeem",

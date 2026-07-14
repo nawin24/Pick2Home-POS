@@ -197,7 +197,7 @@ export async function POST(req: NextRequest) {
 //   const url = new URL(req.url);
 //   const categoryId = url.searchParams.get("categoryId");
 //   const q = url.searchParams.get("q");
-//   const items = await prisma.menuItem.findMany({
+//   const items = await prisma.GroceryItem.findMany({
 //     where: {
 //       ...(categoryId ? { categoryId } : {}),
 //       ...(q ? { name: { contains: q } } : {}),
@@ -215,7 +215,7 @@ export async function POST(req: NextRequest) {
 //   if (!b.name || !b.categoryId || b.price == null) {
 //     return NextResponse.json({ error: "name, categoryId, price required" }, { status: 400 });
 //   }
-//   const item = await prisma.menuItem.create({
+//   const item = await prisma.GroceryItem.create({
 //     data: {
 //       name: b.name,
 //       subcategory: b.subcategory,

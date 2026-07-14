@@ -48,7 +48,7 @@ export async function DELETE(_: NextRequest, { params }: { params: { id: string 
   const auth = await requireAuth(["ADMIN"]);
   if (!auth.ok) return auth.response;
   
-  // CHANGED: menuItem → groceryItem
+  // CHANGED: GroceryItem → groceryItem
   const count = await prisma.groceryItem.count({ 
     where: { categoryId: params.id } 
   });
@@ -103,7 +103,7 @@ export async function DELETE(_: NextRequest, { params }: { params: { id: string 
 // export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
 //   const auth = await requireAuth(["ADMIN"]);
 //   if (!auth.ok) return auth.response;
-//   const count = await prisma.menuItem.count({ where: { categoryId: params.id } });
+//   const count = await prisma.GroceryItem.count({ where: { categoryId: params.id } });
 //   if (count) return NextResponse.json({ error: "Category has items" }, { status: 409 });
 //   await prisma.category.delete({ where: { id: params.id } });
 //   return NextResponse.json({ ok: true });

@@ -126,7 +126,7 @@ function ReceiptContent({ bill, settings, size }: { bill: any; settings: any; si
       {/* Store Header */}
       <div className="text-center">
         <div className={compact ? "font-bold text-base" : "font-bold text-2xl"}>
-          {settings.storeName || settings.restaurantName || "Pick2Home"}
+          {settings.storeName || settings.storeName || "Pick2Home"}
         </div>
         <div className="text-[10px] text-slate-600">{settings.address}</div>
         <div className="text-[10px] text-slate-600">Ph: {settings.phone}</div>

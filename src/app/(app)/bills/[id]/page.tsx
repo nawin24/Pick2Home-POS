@@ -627,8 +627,8 @@ function Receipt({ bill, settings, size }: { bill: any; settings: any; size: str
   const compact = size !== "A4";
   
   // Get restaurant name - FIXED with multiple fallbacks
-  const restaurantName = settings?.storeName || 
-                        settings?.restaurantName || 
+  const storeName = settings?.storeName || 
+                        settings?.storeName || 
                         settings?.businessName || 
                         "Pick2Home";
   
@@ -679,7 +679,7 @@ function Receipt({ bill, settings, size }: { bill: any; settings: any; size: str
           lineHeight: '1.4',
           textAlign: 'center'
         }}>
-          {restaurantName}
+          {storeName}
         </div>
         <div style={{ 
           fontSize: detailFontSize, 

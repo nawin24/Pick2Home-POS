@@ -268,7 +268,7 @@ export default function SettingsPage() {
 //       <div className="card p-5 space-y-3">
 //         <div className="font-semibold text-slate-800">Restaurant Profile</div>
 //         <div className="grid grid-cols-2 gap-3">
-//           <label><span className="label">Name</span><input className="input" {...f("restaurantName")} /></label>
+//           <label><span className="label">Name</span><input className="input" {...f("storeName")} /></label>
 //           <label><span className="label">Phone</span><input className="input" {...f("phone")} /></label>
 //           <label className="col-span-2"><span className="label">Address</span><input className="input" {...f("address")} /></label>
 //           <label><span className="label">Email</span><input className="input" {...f("email")} /></label>

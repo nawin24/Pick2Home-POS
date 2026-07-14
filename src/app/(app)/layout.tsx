@@ -14,7 +14,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen">
-      <Sidebar role={user.role} restaurantName={settings.restaurantName} />
+      <Sidebar role={user.role} storeName={settings.storeName  || "Pick2Home"} />
       <div className="pl-60">
         <Topbar user={{ name: user.name, role: user.role }} />
         <main className="p-6">{children}</main>

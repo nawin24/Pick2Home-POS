@@ -435,58 +435,56 @@ export default function GroceryPOSPage() {
             const isWeightBasedItem = isWeightBased(i);
             
             return (
-              <button
-                key={i.id}
-                onClick={() => addItem(i)}
-                disabled={isOutOfStock}
-                className={clsx("card p-3 text-left transition active:scale-[.99]",
-                  isOutOfStock ? "opacity-50 cursor-not-allowed" : "hover:border-brand-300 hover:shadow-md",
-                  isLowStock && !isOutOfStock ? "border-yellow-300" : "border-slate-200"
+            <button
+              key={i.id}
+              onClick={() => addItem(i)}
+              disabled={isOutOfStock}
+              className={clsx("card p-3 text-left transition active:scale-[.99]",
+                isOutOfStock ? "opacity-50 cursor-not-allowed" : "hover:border-brand-300 hover:shadow-md",
+                isLowStock && !isOutOfStock ? "border-yellow-300" : "border-slate-200"
+              )}
+            >
+              {i.imageUrl && (
+                <img src={i.imageUrl} alt="" className="h-20 w-full object-cover rounded-md mb-2" />
+              )}
+              <div className="flex items-center gap-1 mb-1">
+                <ProductIcon item={i} />
+                <span className="text-[10px] uppercase tracking-wide text-slate-500">{i.category?.name}</span>
+                {i.isPerishable && (
+                  <span className="text-[10px] text-purple-600">🧊</span>
                 )}
-              >
-                {i.imageUrl && (
-                  <img src={i.imageUrl} alt="" className="h-20 w-full object-cover rounded-md mb-2" />
-                )}
-                <div className="flex items-center gap-1 mb-1">
-                  <ProductIcon item={i} />
-                  <span className="text-[10px] uppercase tracking-wide text-slate-500">{i.category?.name}</span>
-                  {i.isPerishable && (
-                    <span className="text-[10px] text-purple-600">🧊</span>
-                  )}
-                  {isWeightBasedItem && (
-                    <span className="text-[10px] text-blue-600 flex items-center gap-0.5">
-                      <Scale size={10} />
-                    </span>
-                  )}
-                </div>
-                <div className="font-semibold text-slate-800 text-sm leading-tight line-clamp-2">{i.name}</div>
-                <div className="text-xs text-slate-400 truncate">{i.brand || "Pick2Home"} · {i.unit}</div>
-                <div className="mt-2 flex items-end justify-between">
-                  <div>
-                    <span className="text-brand-700 font-bold">
-                      {isWeightBasedItem ? `${formatINR(i.price)}/kg` : formatINR(i.price)}
-                    </span>
-                    {i.mrp > i.price && (
-                      <span className="text-xs text-slate-400 line-through ml-1">{formatINR(i.mrp)}</span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    {isLowStock && !isOutOfStock && (
-                      <span className="text-[10px] text-yellow-600">⚠️ Low</span>
-                    )}
-                    {isOutOfStock && (
-                      <span className="text-[10px] text-red-600">Out</span>
-                    )}
-                    <span className="text-[10px] text-slate-400">{i.stockQuantity} {i.unit}</span>
-                  </div>
-                </div>
                 {isWeightBasedItem && (
-                  <div className="mt-1 text-[10px] text-blue-600">⚖️ Weight-based</div>
+                  <span className="text-[10px] text-blue-600 flex items-center gap-0.5">
+                    <Scale size={10} />
+                  </span>
                 )}
-                {i.discountPercent > 0 && (
-                  <div className="mt-1 text-xs text-red-600">{i.discountPercent}% OFF</div>
-                )}
-              </button>
+              </div>
+              <div className="font-semibold text-slate-800 text-sm leading-tight line-clamp-2">{i.name}</div>
+              <div className="text-xs text-slate-400 truncate">{i.brand || "Pick2Home"} · {i.unit}</div>
+              <div className="mt-2 flex items-end justify-between">
+                <div>
+                  <span className="text-brand-700 font-bold">
+                    {isWeightBasedItem ? `${formatINR(i.price)}/kg` : formatINR(i.price)}
+                  </span>
+                  {i.mrp > i.price && (
+                    <span className="text-xs text-slate-400 line-through ml-1">{formatINR(i.mrp)}</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-1">
+                  {isLowStock && !isOutOfStock && (
+                    <span className="text-[10px] text-yellow-600">⚠️ Low</span>
+                  )}
+                  {isOutOfStock && (
+                    <span className="text-[10px] text-red-600">Out</span>
+                  )}
+                  <span className="text-[10px] text-slate-400">{i.stockQuantity} {i.unit}</span>
+                </div>
+              </div>
+              {isWeightBasedItem && (
+                <div className="mt-1 text-[10px] text-blue-600">⚖️ Weight-based</div>
+              )}
+            
+            </button>
             );
           })}
           {filtered.length === 0 && (

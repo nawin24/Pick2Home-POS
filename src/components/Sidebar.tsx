@@ -27,7 +27,7 @@ const NAV: Item[] = [
   { key: "settings", href: "/settings", label: "Settings", icon: Settings },
 ];
 
-export default function Sidebar({ role }: { role: Role; restaurantName?: string }) {
+export default function Sidebar({ role }: { role: Role; storeName?: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const allowed = new Set(NAV_PERMISSIONS[role] ?? []);

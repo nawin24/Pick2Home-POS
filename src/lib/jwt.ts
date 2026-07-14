@@ -6,7 +6,7 @@ const secret = () =>
 export type JwtPayload = {
   sub: string;
   email: string;
-  role: "ADMIN" | "MANAGER" | "CASHIER" | "KITCHEN";
+  role: "ADMIN" | "MANAGER" | "CASHIER" ;
   name: string;
 };
 

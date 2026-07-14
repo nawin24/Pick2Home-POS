@@ -412,7 +412,7 @@ main()
 //     update: {},
 //     create: {
 //       id: "singleton",
-//       restaurantName: "Pick2Home",
+//       storeName: "Pick2Home",
 //       address: "12, MG Road, Bengaluru, Karnataka 560001",
 //       phone: "+91 98765 43210",
 //       email: "hello@spicegarden.in",
@@ -542,9 +542,9 @@ main()
 //   for (const it of items) {
 //     const cId = C[it.category];
 //     if (!cId) continue;
-//     const existing = await prisma.menuItem.findFirst({ where: { name: it.name } });
+//     const existing = await prisma.GroceryItem.findFirst({ where: { name: it.name } });
 //     if (existing) continue;
-//     await prisma.menuItem.create({
+//     await prisma.GroceryItem.create({
 //       data: {
 //         name: it.name,
 //         categoryId: cId,
@@ -605,7 +605,7 @@ main()
 //   if (cashier) {
 //     const billCount = await prisma.bill.count();
 //     if (billCount === 0) {
-//       const sampleItems = await prisma.menuItem.findMany({ take: 3 });
+//       const sampleItems = await prisma.GroceryItem.findMany({ take: 3 });
 //       const order = await prisma.order.create({
 //         data: {
 //           orderNumber: "ORD-SAMPLE-0001",
