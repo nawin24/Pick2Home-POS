@@ -55,7 +55,7 @@ export default function LoginPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] opacity-10">
           <div className="relative w-full h-full">
             <Image
-              src="/Pick2 Home Finalised Logo.ai.jpg.jpeg"
+              src="logo.jpeg"
               alt=""
               fill
               className="object-contain"
@@ -101,7 +101,7 @@ export default function LoginPage() {
         <div className="flex flex-col items-center gap-3 mb-8">
           <div className="relative w-28 h-28 rounded-full overflow-hidden bg-white/95 shadow-2xl p-2 ring-4 ring-white/50 backdrop-blur-sm">
             <Image
-              src="/Pick2 Home Finalised Logo.ai.jpg.jpeg"
+              src="logo.jpeg"
               alt="Pick2Home Logo"
               fill
               className="object-contain"
@@ -283,7 +283,7 @@ export default function LoginPage() {
 //         <div className="flex flex-col items-center gap-2 mb-6">
 //           <div className="relative w-28 h-28 rounded-full overflow-hidden bg-white shadow-lg p-1">
 //             <Image
-//               src="/Pick2 Home Finalised Logo.ai.jpg.jpeg"
+//               src="logo.jpeg"
 //               alt="Pick2Home Logo"
 //               fill
 //               className="object-contain"

@@ -2,58 +2,11 @@
   "firestore": {
     "database": "(default)",
     "location": "asia-south1",
-    "rules": "firebase/firestore.rules",
-    "indexes": "firebase/firestore.indexes.json"
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
   },
-  "functions": [
-    {
-      "source": "firebase/functions",
-      "codebase": "pos",
-      "runtime": "nodejs20",
-      "disallowLegacyRuntimeConfig": true,
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ]
-    }
-  ],
-  "hosting": {
-    "site": "p2h-app-pos",
-    "target": "pos",
-    "public": "public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "/api/**",
-        "function": {
-          "functionId": "posNextServer",
-          "region": "asia-south1"
-        }
-      },
-      {
-        "source": "**",
-        "function": {
-          "functionId": "posNextServer",
-          "region": "asia-south1"
-        }
-      }
-    ],
-    "cleanUrls": true,
-    "trailingSlash": false
-  },
-  "storage": {
-    "rules": "firebase/storage.rules"
-  },
-  "extensions": {},
   "apphosting": {
-    "backendId": "p2h",
+    "backendId": "pick2home-pos-backend",
     "rootDir": "/",
     "ignore": [
       "node_modules",
@@ -61,6 +14,10 @@
       "firebase-debug.log",
       "firebase-debug.*.log",
       "functions"
-    ]
+    ],
+    "alwaysDeployFromSource": true
+  },
+  "storage": {
+    "rules": "storage.rules"
   }
 }

@@ -1,0 +1,62 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isPlatformAdmin() {
+      return isAuthenticated() && 
+        firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid));
+    }
+
+    // Products folder: Public read, Authenticated write for admins/migration
+    match /products/{allPaths=**} {
+      allow read: if true; 
+      allow write: if isPlatformAdmin();
+    }
+    
+    // Categories folder: Public read
+    match /categories/{allPaths=**} {
+      allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+    
+    // Sub Categories folder: Public read
+    match /subCategories/{allPaths=**} {
+    	allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+
+    // Users folder: Private access (for future profile pictures)
+    match /profile_pics/{userId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    match /banners/{bannerId}/{allPaths=**} {
+    	allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+    
+    match /promotions/{allpaths=**} {
+    	allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+    
+    match /partners/{uid}/docs/{allPaths=**} {
+      allow write, read: if isAuthenticated() && request.auth.uid == uid;
+      allow read: if isPlatformAdmin();
+    }
+
+    // Standard User Private Folders
+    match /users/{userId}/{allPaths=**} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+		match /{allPaths=**} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}

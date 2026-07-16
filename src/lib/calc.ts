@@ -19,7 +19,8 @@ export type BillExtras = {
   billDiscount?: number;          // absolute rupees
   billDiscountPercent?: number;   // percent applied to subtotal
   couponDiscount?: number;        // absolute ₹ deduction from a validated coupon
-  loyaltyRedeemValue?: number;    // absolute ₹ deduction from points redemption
+  loyaltyRedeemValue?: number; 
+     // absolute ₹ deduction from points redemption
 };
 
 export type ComputedLine = CartLine & {
