@@ -1,21 +1,18 @@
-# Settings for Backend (on Cloud Run).
 runConfig:
   minInstances: 0
-  # maxInstances: 100
-  # concurrency: 80
-  # cpu: 1
-  # memoryMiB: 512
 
-# Environment variables and secrets.
+scripts:
+  buildCommand: "prisma generate && next build" # ⬅️ Add this if needed
+
 env:
-  # ── Database ──
+  # Database
   - variable: DATABASE_URL
-    value: "file:./prisma/dev.db" # Change to: "file:/app/prisma/dev.db"
+    value: "file:/app/prisma/dev.db"
     availability:
       - BUILD
       - RUNTIME
 
-  # ── Firebase Client SDK ──
+  # Firebase Client SDK
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
     value: "AIzaSyB-SZlR8QdVsU8sKMuEK2gmv3Enqd1l-TU"
     availability:
@@ -52,7 +49,7 @@ env:
       - BUILD
       - RUNTIME
 
-  # ── Firebase Admin SDK ──
+  # Firebase Admin SDK
   - variable: FIREBASE_PROJECT_ID
     value: "pick2home-1"
     availability:
@@ -65,11 +62,10 @@ env:
       - BUILD
       - RUNTIME
 
-  # ── Auth ──
+  # Secrets
   - variable: JWT_SECRET
     secret: jwt-secret
 
-  # ── Firebase Service Account ──
   - variable: FIREBASE_SERVICE_ACCOUNT_JSON
     secret: firebase-service-account
 

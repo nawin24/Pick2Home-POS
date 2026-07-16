@@ -44,7 +44,7 @@ export default function Sidebar({ role }: { role: Role; storeName?: string }) {
         {/* Logo Image */}
         <div className="relative w-16 h-16 rounded-full overflow-hidden bg-white/10 p-1">
            <Image
-      src="logo.jpeg"
+      src="/logo.jpeg"
       alt="Logo"
       fill
       className="object-contain"
