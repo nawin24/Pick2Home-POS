@@ -494,7 +494,7 @@ export default function GroceryPOSPage() {
       </div>
 
       {/* RIGHT: cart */}
-      <div className="col-span-4 flex flex-col card overflow-hidden">
+      {/* <div className="col-span-4 flex flex-col card overflow-hidden">
         <div className="p-3 border-b border-slate-100 flex items-center justify-between">
           <div className="font-semibold text-slate-800 flex items-center gap-2">
             <Receipt size={16} />
@@ -634,7 +634,234 @@ export default function GroceryPOSPage() {
             <Save size={16} /> Save & Pay
           </button>
         </div>
+      </div> */}
+
+      <div className="col-span-4 flex flex-col card overflow-hidden">
+  <div className="p-3 border-b border-slate-100 flex items-center justify-between">
+    <div className="font-semibold text-slate-800 flex items-center gap-2">
+      <Receipt size={16} />
+      Current Order
+    </div>
+    <div className="flex gap-1">
+      <button onClick={() => setHoldOpen(true)} className="btn btn-ghost px-2 py-1 text-xs"><Pause size={14} />Hold</button>
+      <button onClick={openRecall} className="btn btn-ghost px-2 py-1 text-xs"><History size={14} />Recall</button>
+    </div>
+  </div>
+
+  <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
+    {cart.length === 0 && <div className="text-center text-slate-400 py-12 text-sm">Cart is empty.<br />Tap products to add.</div>}
+    {cart.map((l, idx) => {
+      const item = items.find(i => i.id === l.menuItemId);
+      const itemTotal = l.price * l.quantity;
+      // Get MRP from the item or use price as fallback
+      const mrpValue = item?.mrp || l.price;
+      const hasMRP = mrpValue > 0 && mrpValue !== l.price;
+      const discountPercent = hasMRP ? Math.round(((mrpValue - l.price) / mrpValue) * 100) : 0;
+      
+      return (
+        <div key={idx} className="border border-slate-100 rounded-lg p-2 text-sm">
+          <div className="flex items-start justify-between">
+            <div className="font-medium text-slate-800 flex-1">{l.name}</div>
+            <button onClick={() => removeLine(idx)} className="text-slate-400 hover:text-red-600"><Trash2 size={14} /></button>
+          </div>
+          <div className="text-xs text-slate-400">
+            {item?.brand || "Pick2Home"} · {l.isWeightBased ? 'Weight-based' : item?.unit || ''}
+            {l.isWeightBased && l.weight && (
+              <span className="ml-1">({l.weight.toFixed(2)} kg)</span>
+            )}
+          </div>
+          
+          {/* MRP Details Section */}
+          <div className="mt-1 p-1.5 bg-slate-50 rounded border border-slate-200">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 flex-1">
+                <span className="text-xs text-slate-500 whitespace-nowrap">MRP:</span>
+                <input
+                  type="number"
+                  min={0}
+                  step={0.01}
+                  value={mrpValue}
+                  onChange={(e) => {
+                    const mrp = Number(e.target.value);
+                    const updatedCart = [...cart];
+                    // Find the item and update its mrp in the items list
+                    const itemToUpdate = items.find(i => i.id === updatedCart[idx].menuItemId);
+                    if (itemToUpdate) {
+                      // Update the item's mrp
+                      const updatedItems = items.map(i => 
+                        i.id === itemToUpdate.id ? { ...i, mrp: mrp } : i
+                      );
+                      setItems(updatedItems);
+                      
+                      // If MRP is less than current price, adjust price
+                      if (mrp < updatedCart[idx].price) {
+                        updatedCart[idx].price = mrp;
+                      }
+                      setCart(updatedCart);
+                    }
+                  }}
+                  className="input py-0.5 text-xs h-6 w-20"
+                />
+                {hasMRP && discountPercent > 0 && (
+                  <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
+                    {discountPercent}% OFF
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-500">Selling:</span>
+                <input
+                  type="number"
+                  min={0}
+                  step={0.01}
+                  value={l.price}
+                  onChange={(e) => {
+                    const price = Number(e.target.value);
+                    const updatedCart = [...cart];
+                    updatedCart[idx].price = price;
+                    
+                    // If price exceeds MRP, update MRP
+                    if (mrpValue && price > mrpValue) {
+                      const itemToUpdate = items.find(i => i.id === updatedCart[idx].menuItemId);
+                      if (itemToUpdate) {
+                        const updatedItems = items.map(i => 
+                          i.id === itemToUpdate.id ? { ...i, mrp: price } : i
+                        );
+                        setItems(updatedItems);
+                      }
+                    }
+                    setCart(updatedCart);
+                  }}
+                  className="input py-0.5 text-xs h-6 w-20 font-semibold text-brand-700"
+                />
+              </div>
+            </div>
+            {hasMRP && (
+              <div className="flex items-center justify-between mt-1 text-xs">
+                <span className="text-slate-500">Savings:</span>
+                <span className="font-medium text-emerald-600">
+                  {formatINR((mrpValue - l.price) * l.quantity)}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center gap-1">
+              <button onClick={() => changeQty(idx, -1)} className="h-6 w-6 rounded-md bg-slate-100 hover:bg-slate-200 flex items-center justify-center"><Minus size={12} /></button>
+              <span className="w-7 text-center font-medium">{l.quantity}</span>
+              <button onClick={() => changeQty(idx, +1)} className="h-6 w-6 rounded-md bg-brand-100 text-brand-700 hover:bg-brand-200 flex items-center justify-center"><Plus size={12} /></button>
+            </div>
+            <div className="text-right">
+              <div className="text-slate-500 text-xs">
+                {l.isWeightBased && l.weight 
+                  ? `${formatINR(l.price)} × ${l.weight.toFixed(2)}kg`
+                  : `${formatINR(l.price)} × ${l.quantity}`
+                }
+                {hasMRP && mrpValue > l.price && (
+                  <span className="ml-1 line-through text-slate-400">
+                    {formatINR(mrpValue)}
+                  </span>
+                )}
+              </div>
+              <div className="font-semibold">{formatINR(itemTotal)}</div>
+            </div>
+          </div>
+          <div className="mt-1 flex items-center gap-2">
+            <span className="text-xs text-slate-500">Discount ₹</span>
+            <input
+              type="number" min={0}
+              value={l.discount ?? 0}
+              onChange={(e) => changeLineDiscount(idx, Number(e.target.value))}
+              className="input py-1 text-xs h-7 w-24"
+            />
+          </div>
+        </div>
+      );
+    })}
+  </div>
+
+  {cart.length > 0 && (
+    <div className="px-3 py-1 border-t border-slate-100 bg-slate-50">
+      <div className="text-xs text-slate-500 flex justify-between">
+        <span>Total Weight:</span>
+        <span className="font-medium">{totalWeight.toFixed(2)} kg</span>
       </div>
+    </div>
+  )}
+
+  {orderType === "DELIVERY" && (
+    <div className="px-3 pb-2 space-y-2">
+      <div className="grid grid-cols-2 gap-2">
+        <input className="input text-xs" placeholder="Name" value={deliveryInfo.name} onChange={(e) => setDeliveryInfo({ ...deliveryInfo, name: e.target.value })} />
+        <input className="input text-xs" placeholder="Phone" value={deliveryInfo.phone} onChange={(e) => setDeliveryInfo({ ...deliveryInfo, phone: e.target.value })} />
+      </div>
+      <input className="input text-xs" placeholder="Address" value={deliveryInfo.address} onChange={(e) => setDeliveryInfo({ ...deliveryInfo, address: e.target.value })} />
+      <input className="input text-xs" placeholder="Delivery partner (optional)" value={deliveryInfo.partner} onChange={(e) => setDeliveryInfo({ ...deliveryInfo, partner: e.target.value })} />
+    </div>
+  )}
+
+  <div className="px-3 pt-2 pb-1 border-t border-slate-100 space-y-2 bg-slate-50">
+    {couponCode ? (
+      <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-md px-2 py-1 text-xs">
+        <span className="text-emerald-700 font-medium">Coupon <b>{couponCode}</b> applied · − {formatINR(couponDiscount)}</span>
+        <button onClick={removeCoupon} className="text-emerald-700">×</button>
+      </div>
+    ) : (
+      <div className="flex gap-1">
+        <input className="input py-1 text-xs h-7 flex-1 uppercase" placeholder="Coupon code"
+          value={couponInput} onChange={(e) => setCouponInput(e.target.value.toUpperCase())} />
+        <button onClick={applyCoupon} className="btn btn-secondary text-xs py-1 px-2">Apply</button>
+      </div>
+    )}
+    {settings?.loyaltyEnabled && customerProfile && customerProfile.loyaltyPoints >= (settings.loyaltyMinRedeem ?? 1) && (
+      <div className="flex items-center gap-2 bg-violet-50 border border-violet-200 rounded-md px-2 py-1 text-xs">
+        <span className="text-violet-700">Available: <b>{customerProfile.loyaltyPoints} pts</b></span>
+        <input type="number" min={0} max={customerProfile.loyaltyPoints}
+          className="input py-0.5 text-xs h-6 w-20"
+          placeholder="Redeem"
+          value={redeemPoints || ""}
+          onChange={(e) => setRedeemPoints(Math.min(customerProfile.loyaltyPoints, Math.max(0, Number(e.target.value))))} />
+        <span className="text-violet-700">= {formatINR(loyaltyValue)}</span>
+      </div>
+    )}
+  </div>
+  <div className="px-3 py-2 space-y-1 text-sm bg-slate-50">
+    <Line label="Subtotal" value={formatINR(computed.subtotal)} />
+    {computed.itemDiscount > 0 && <Line label="Item discount" value={`− ${formatINR(computed.itemDiscount)}`} />}
+    {couponDiscount > 0 && <Line label={`Coupon ${couponCode}`} value={`− ${formatINR(couponDiscount)}`} />}
+    {loyaltyValue > 0 && <Line label={`Loyalty (${redeemPoints} pts)`} value={`− ${formatINR(loyaltyValue)}`} />}
+    <Line label={`GST (CGST ${formatINR(computed.cgst)} + SGST ${formatINR(computed.sgst)})`} value={formatINR(computed.totalGst)} />
+    <div className="grid grid-cols-2 gap-1 pt-1">
+      <label className="text-xs"><span className="text-slate-500">Packing</span>
+        <input type="number" className="input py-1 text-xs h-7" value={packing} min={0} onChange={(e) => setPacking(Number(e.target.value))} />
+      </label>
+      <label className="text-xs"><span className="text-slate-500">Bill disc ₹</span>
+        <input type="number" className="input py-1 text-xs h-7" value={billDiscount} min={0} onChange={(e) => setBillDiscount(Number(e.target.value))} />
+      </label>
+    </div>
+    {orderType === "DELIVERY" && (
+      <Line label="Delivery" value={
+        <input type="number" className="input py-0.5 text-xs h-6 w-24 text-right" value={delivery} min={0} onChange={(e) => setDelivery(Number(e.target.value))} />
+      } />
+    )}
+    {computed.roundOff !== 0 && <Line label="Round off" value={formatINR(computed.roundOff)} />}
+    <div className="border-t border-slate-200 mt-2 pt-2 flex items-baseline justify-between">
+      <span className="font-semibold text-slate-800">Grand Total</span>
+      <span className="text-xl font-bold text-brand-700">{formatINR(computed.grandTotal)}</span>
+    </div>
+  </div>
+
+  <div className="p-3 border-t border-slate-100">
+    <button
+      disabled={!cart.length}
+      onClick={() => setPayOpen(true)}
+      className="btn btn-primary w-full text-base py-3"
+    >
+      <Save size={16} /> Save & Pay
+    </button>
+  </div>
+</div>
 
       {/* Payment modal */}
       <Modal open={payOpen} onClose={() => setPayOpen(false)} title="Payment" size="lg"

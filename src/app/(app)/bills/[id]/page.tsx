@@ -619,10 +619,6 @@ export default function BillDetail() {
     </div>
   );
 }
-
-// =============================================
-// RECEIPT COMPONENT - WITH EXTRA PADDING
-// =============================================
 function Receipt({ bill, settings, size }: { bill: any; settings: any; size: string }) {
   const compact = size !== "A4";
   
@@ -638,27 +634,29 @@ function Receipt({ bill, settings, size }: { bill: any; settings: any; size: str
   const fssai = settings?.fssai || "";
   const footer = settings?.invoiceFooter || "Thank you for shopping at Pick2Home!";
   
-  // Determine font sizes based on paper size
-  const nameFontSize = compact ? "14px" : "22px";
-  const detailFontSize = compact ? "9px" : "12px";
-  const tableFontSize = compact ? "9px" : "12px";
+  // Determine font sizes based on paper size - INCREASED FOR BETTER READABILITY
+  const nameFontSize = compact ? "16px" : "24px";
+  const detailFontSize = compact ? "11px" : "14px";
+  const tableFontSize = compact ? "10px" : "13px";
+  const headerFontSize = compact ? "10px" : "13px";
   
   return (
     <div style={{ 
       width: '100%', 
       overflow: 'visible', 
-      padding: '4px 0', 
+      padding: '6px 0', 
       margin: 0,
-      display: 'block'
+      display: 'block',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
     }}>
       {/* ============================================ */}
       {/* STORE HEADER - WITH EXTRA PADDING ON TOP */}
       {/* ============================================ */}
       <div style={{ 
         textAlign: 'center', 
-        marginBottom: compact ? '6px' : '10px',
-        paddingTop: compact ? '6px' : '12px',
-        paddingBottom: compact ? '4px' : '8px',
+        marginBottom: compact ? '8px' : '12px',
+        paddingTop: compact ? '8px' : '14px',
+        paddingBottom: compact ? '6px' : '10px',
         paddingLeft: '4px',
         paddingRight: '4px',
         width: '100%',
@@ -666,9 +664,9 @@ function Receipt({ bill, settings, size }: { bill: any; settings: any; size: str
         display: 'block'
       }}>
         <div style={{ 
-          fontWeight: 'bold', 
+          fontWeight: '900',
           fontSize: nameFontSize,
-          color: '#059669',
+          color: '#000000',
           width: '100%',
           overflow: 'visible',
           whiteSpace: 'normal',
@@ -676,64 +674,73 @@ function Receipt({ bill, settings, size }: { bill: any; settings: any; size: str
           display: 'block',
           padding: '4px 8px',
           margin: '0 auto',
-          lineHeight: '1.4',
-          textAlign: 'center'
+          lineHeight: '1.3',
+          textAlign: 'center',
+          letterSpacing: '0.5px'
         }}>
           {storeName}
         </div>
         <div style={{ 
-          fontSize: detailFontSize, 
-          color: '#475569',
-          marginTop: '3px',
-          padding: '1px 4px',
+          fontSize: detailFontSize,
+          color: '#1a1a1a',
+          fontWeight: '700',
+          marginTop: '4px',
+          padding: '2px 4px',
           width: '100%',
           overflow: 'visible',
           whiteSpace: 'normal',
           wordWrap: 'break-word',
           display: 'block',
-          textAlign: 'center'
+          textAlign: 'center',
+          lineHeight: '1.5'
         }}>
           {address}
         </div>
         <div style={{ 
-          fontSize: detailFontSize, 
-          color: '#475569',
-          padding: '1px 4px',
+          fontSize: detailFontSize,
+          color: '#1a1a1a',
+          fontWeight: '700',
+          padding: '2px 4px',
           width: '100%',
           overflow: 'visible',
           whiteSpace: 'normal',
           wordWrap: 'break-word',
           display: 'block',
-          textAlign: 'center'
+          textAlign: 'center',
+          lineHeight: '1.5'
         }}>
           Ph: {phone}
         </div>
         {gstin && (
           <div style={{ 
-            fontSize: detailFontSize, 
-            color: '#475569',
-            padding: '1px 4px',
+            fontSize: detailFontSize,
+            color: '#1a1a1a',
+            fontWeight: '700',
+            padding: '2px 4px',
             width: '100%',
             overflow: 'visible',
             whiteSpace: 'normal',
             wordWrap: 'break-word',
             display: 'block',
-            textAlign: 'center'
+            textAlign: 'center',
+            lineHeight: '1.5'
           }}>
             GSTIN: {gstin}
           </div>
         )}
         {fssai && (
           <div style={{ 
-            fontSize: detailFontSize, 
-            color: '#475569',
-            padding: '1px 4px',
+            fontSize: detailFontSize,
+            color: '#1a1a1a',
+            fontWeight: '700',
+            padding: '2px 4px',
             width: '100%',
             overflow: 'visible',
             whiteSpace: 'normal',
             wordWrap: 'break-word',
             display: 'block',
-            textAlign: 'center'
+            textAlign: 'center',
+            lineHeight: '1.5'
           }}>
             FSSAI: {fssai}
           </div>
@@ -741,9 +748,9 @@ function Receipt({ bill, settings, size }: { bill: any; settings: any; size: str
       </div>
       
       <div style={{ 
-        borderTop: '1px dashed #cbd5e1', 
-        margin: compact ? '4px 0' : '8px 0',
-        paddingTop: compact ? '4px' : '8px',
+        borderTop: '2px solid #000000',
+        margin: compact ? '6px 0' : '10px 0',
+        paddingTop: compact ? '6px' : '10px',
         width: '100%'
       }} />
 
@@ -751,33 +758,36 @@ function Receipt({ bill, settings, size }: { bill: any; settings: any; size: str
       {/* BILL INFO */}
       {/* ============================================ */}
       <div style={{ 
-        fontSize: compact ? '9px' : '12px',
+        fontSize: compact ? '11px' : '14px',
+        fontWeight: '700',
+        color: '#000000',
         width: '100%',
         overflow: 'visible',
-        padding: '0 2px'
+        padding: '0 4px',
+        lineHeight: '1.8'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap' }}>
-          <span>Bill: <b>{bill?.billNumber || 'N/A'}</b></span>
-          <span>Date: {bill?.createdAt ? new Date(bill.createdAt).toLocaleString() : 'N/A'}</span>
+          <span>Bill: <span style={{ fontWeight: '900' }}>{bill?.billNumber || 'N/A'}</span></span>
+          <span>Date: <span style={{ fontWeight: '900' }}>{bill?.createdAt ? new Date(bill.createdAt).toLocaleString() : 'N/A'}</span></span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap' }}>
-          <span>Cashier: {bill?.cashier?.name || 'N/A'}</span>
-          <span>Type: {bill?.orderType || 'N/A'}
+          <span>Cashier: <span style={{ fontWeight: '900' }}>{bill?.cashier?.name || 'N/A'}</span></span>
+          <span>Type: <span style={{ fontWeight: '900' }}>{bill?.orderType || 'N/A'}
             {bill?.order?.pickupCounter?.number && ` · C${bill.order.pickupCounter.number}`}
-          </span>
+          </span></span>
         </div>
         {bill?.customer && (
           <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap' }}>
-            <span>Customer: {bill.customer.name || 'N/A'}</span>
-            <span>Phone: {bill.customer.phone || 'N/A'}</span>
+            <span>Customer: <span style={{ fontWeight: '900' }}>{bill.customer.name || 'N/A'}</span></span>
+            <span>Phone: <span style={{ fontWeight: '900' }}>{bill.customer.phone || 'N/A'}</span></span>
           </div>
         )}
       </div>
 
       <div style={{ 
-        borderTop: '1px dashed #cbd5e1', 
-        margin: compact ? '4px 0' : '8px 0',
-        paddingTop: compact ? '4px' : '8px',
+        borderTop: '2px solid #000000',
+        margin: compact ? '6px 0' : '10px 0',
+        paddingTop: compact ? '6px' : '10px',
         width: '100%'
       }} />
 
@@ -796,31 +806,43 @@ function Receipt({ bill, settings, size }: { bill: any; settings: any; size: str
           <tr>
             <th style={{ 
               textAlign: 'left', 
-              padding: '2px 6px',
-              borderBottom: '1px dashed #cbd5e1',
+              padding: '4px 8px',
+              borderBottom: '2px solid #000000',
               width: '50%',
-              fontSize: compact ? '8px' : '11px'
+              fontSize: headerFontSize,
+              fontWeight: '900',
+              color: '#000000',
+              letterSpacing: '0.5px'
             }}>Item</th>
             <th style={{ 
               textAlign: 'right', 
-              padding: '2px 6px',
-              borderBottom: '1px dashed #cbd5e1',
+              padding: '4px 8px',
+              borderBottom: '2px solid #000000',
               width: '15%',
-              fontSize: compact ? '8px' : '11px'
+              fontSize: headerFontSize,
+              fontWeight: '900',
+              color: '#000000',
+              letterSpacing: '0.5px'
             }}>Qty</th>
             <th style={{ 
               textAlign: 'right', 
-              padding: '2px 6px',
-              borderBottom: '1px dashed #cbd5e1',
+              padding: '4px 8px',
+              borderBottom: '2px solid #000000',
               width: '17%',
-              fontSize: compact ? '8px' : '11px'
+              fontSize: headerFontSize,
+              fontWeight: '900',
+              color: '#000000',
+              letterSpacing: '0.5px'
             }}>Rate</th>
             <th style={{ 
               textAlign: 'right', 
-              padding: '2px 6px',
-              borderBottom: '1px dashed #cbd5e1',
+              padding: '4px 8px',
+              borderBottom: '2px solid #000000',
               width: '18%',
-              fontSize: compact ? '8px' : '11px'
+              fontSize: headerFontSize,
+              fontWeight: '900',
+              color: '#000000',
+              letterSpacing: '0.5px'
             }}>Amt</th>
           </tr>
         </thead>
@@ -828,33 +850,52 @@ function Receipt({ bill, settings, size }: { bill: any; settings: any; size: str
           {bill?.order?.items?.map((i: any) => (
             <tr key={i.id}>
               <td style={{ 
-                padding: '2px 6px',
+                padding: '4px 8px',
                 textAlign: 'left',
                 wordWrap: 'break-word',
                 overflow: 'visible',
-                fontSize: compact ? '8px' : '11px'
+                fontSize: tableFontSize,
+                fontWeight: '700',
+                color: '#000000',
+                lineHeight: '1.4',
+                borderBottom: '1px solid #cccccc'
               }}>
                 {i.name || 'Item'}
                 {i.groceryItem?.sku && (
-                  <span style={{ fontSize: '7px', color: '#94a3b8', marginLeft: '4px' }}>
+                  <span style={{ 
+                    fontSize: compact ? '8px' : '10px', 
+                    color: '#333333', 
+                    marginLeft: '6px', 
+                    fontWeight: '600',
+                    display: 'inline-block'
+                  }}>
                     ({i.groceryItem.sku})
                   </span>
                 )}
               </td>
               <td style={{ 
-                padding: '2px 6px', 
+                padding: '4px 8px', 
                 textAlign: 'right',
-                fontSize: compact ? '8px' : '11px'
+                fontSize: tableFontSize,
+                fontWeight: '800',
+                color: '#000000',
+                borderBottom: '1px solid #cccccc'
               }}>{i.quantity || 0}</td>
               <td style={{ 
-                padding: '2px 6px', 
+                padding: '4px 8px', 
                 textAlign: 'right',
-                fontSize: compact ? '8px' : '11px'
+                fontSize: tableFontSize,
+                fontWeight: '800',
+                color: '#000000',
+                borderBottom: '1px solid #cccccc'
               }}>{formatINR(i.price || 0)}</td>
               <td style={{ 
-                padding: '2px 6px', 
+                padding: '4px 8px', 
                 textAlign: 'right',
-                fontSize: compact ? '8px' : '11px'
+                fontSize: tableFontSize,
+                fontWeight: '800',
+                color: '#000000',
+                borderBottom: '1px solid #cccccc'
               }}>{formatINR((i.price || 0) * (i.quantity || 0))}</td>
             </tr>
           ))}
@@ -862,16 +903,24 @@ function Receipt({ bill, settings, size }: { bill: any; settings: any; size: str
       </table>
 
       <div style={{ 
-        borderTop: '1px dashed #cbd5e1', 
-        margin: compact ? '4px 0' : '8px 0',
-        paddingTop: compact ? '4px' : '8px',
+        borderTop: '2px solid #000000',
+        margin: compact ? '6px 0' : '10px 0',
+        paddingTop: compact ? '6px' : '10px',
         width: '100%'
       }} />
 
       {/* ============================================ */}
       {/* TOTALS */}
       {/* ============================================ */}
-      <div style={{ textAlign: 'right', width: '100%', padding: '0 2px' }}>
+      <div style={{ 
+        textAlign: 'right', 
+        width: '100%', 
+        padding: '0 4px',
+        fontWeight: '700',
+        color: '#000000',
+        fontSize: compact ? '11px' : '14px',
+        lineHeight: '1.8'
+      }}>
         <Row label="Subtotal" value={formatINR(bill?.subtotal || 0)} compact={compact} />
         {bill?.itemDiscount > 0 && <Row label="Item Disc" value={`− ${formatINR(bill.itemDiscount)}`} compact={compact} />}
         {bill?.billDiscount > 0 && <Row label="Bill Disc" value={`− ${formatINR(bill.billDiscount)}`} compact={compact} />}
@@ -884,27 +933,32 @@ function Receipt({ bill, settings, size }: { bill: any; settings: any; size: str
         {bill?.loyaltyValue > 0 && <Row label="Loyalty" value={`− ${formatINR(bill.loyaltyValue)}`} compact={compact} />}
         
         <div style={{ 
-          borderTop: '1px dashed #cbd5e1', 
-          marginTop: compact ? '4px' : '8px',
-          paddingTop: compact ? '4px' : '8px',
+          borderTop: '2px solid #000000',
+          marginTop: compact ? '6px' : '10px',
+          paddingTop: compact ? '6px' : '10px',
           width: '100%'
         }} />
         <div style={{ 
           display: 'flex', 
           justifyContent: 'space-between',
-          fontWeight: 'bold',
-          fontSize: compact ? '12px' : '18px',
-          width: '100%'
+          fontWeight: '900',
+          fontSize: compact ? '16px' : '22px',
+          color: '#000000',
+          width: '100%',
+          padding: '4px 0',
+          letterSpacing: '0.5px'
         }}>
           <span>TOTAL</span>
           <span>{formatINR(bill?.grandTotal || 0)}</span>
         </div>
         
         <div style={{ 
-          fontSize: compact ? '8px' : '11px', 
-          marginTop: '4px',
-          color: '#64748b',
-          width: '100%'
+          fontSize: compact ? '10px' : '13px', 
+          marginTop: '6px',
+          color: '#1a1a1a',
+          fontWeight: '700',
+          width: '100%',
+          lineHeight: '1.6'
         }}>
           Paid via {bill?.paymentMethod || 'N/A'}
           {bill?.paymentMethod === "SPLIT" && (
@@ -918,9 +972,9 @@ function Receipt({ bill, settings, size }: { bill: any; settings: any; size: str
       </div>
 
       <div style={{ 
-        borderTop: '1px dashed #cbd5e1', 
-        margin: compact ? '4px 0' : '8px 0',
-        paddingTop: compact ? '4px' : '8px',
+        borderTop: '2px solid #000000',
+        margin: compact ? '6px 0' : '10px 0',
+        paddingTop: compact ? '6px' : '10px',
         width: '100%'
       }} />
       
@@ -929,20 +983,23 @@ function Receipt({ bill, settings, size }: { bill: any; settings: any; size: str
       {/* ============================================ */}
       <div style={{ 
         textAlign: 'center', 
-        fontSize: compact ? '8px' : '12px',
-        color: '#64748b',
+        fontSize: compact ? '11px' : '14px',
+        color: '#000000',
+        fontWeight: '800',
         width: '100%',
         overflow: 'visible',
-        padding: '4px 0'
+        padding: '8px 0',
+        lineHeight: '1.6',
+        letterSpacing: '0.3px'
       }}>
         {footer}
       </div>
       
       {/* QR Code */}
       {settings?.paymentQrUrl && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '8px', width: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px', width: '100%' }}>
           <img src={settings.paymentQrUrl} alt="QR Code" style={{ 
-            width: compact ? '40px' : '64px', 
+            width: compact ? '50px' : '80px', 
             height: 'auto' 
           }} />
         </div>
@@ -950,6 +1007,354 @@ function Receipt({ bill, settings, size }: { bill: any; settings: any; size: str
     </div>
   );
 }
+
+// Helper Row component with improved readability
+// function Row({ label, value, compact }: { label: string; value: string; compact: boolean }) {
+//   return (
+//     <div style={{ 
+//       display: 'flex', 
+//       justifyContent: 'space-between',
+//       fontSize: compact ? '11px' : '14px',
+//       fontWeight: '700',
+//       color: '#000000',
+//       padding: '1px 0',
+//       lineHeight: '1.6'
+//     }}>
+//       <span>{label}</span>
+//       <span style={{ fontWeight: '800' }}>{value}</span>
+//     </div>
+//   );
+// }
+// =============================================
+// RECEIPT COMPONENT - WITH EXTRA PADDING
+// =============================================
+// function Receipt({ bill, settings, size }: { bill: any; settings: any; size: string }) {
+//   const compact = size !== "A4";
+  
+//   // Get restaurant name - FIXED with multiple fallbacks
+//   const storeName = settings?.storeName || 
+//                         settings?.storeName || 
+//                         settings?.businessName || 
+//                         "Pick2Home";
+  
+//   const address = settings?.address || "Your Store Address";
+//   const phone = settings?.phone || "0000000000";
+//   const gstin = settings?.gstin || "";
+//   const fssai = settings?.fssai || "";
+//   const footer = settings?.invoiceFooter || "Thank you for shopping at Pick2Home!";
+  
+//   // Determine font sizes based on paper size
+//   const nameFontSize = compact ? "14px" : "22px";
+//   const detailFontSize = compact ? "9px" : "12px";
+//   const tableFontSize = compact ? "9px" : "12px";
+  
+//   return (
+//     <div style={{ 
+//       width: '100%', 
+//       overflow: 'visible', 
+//       padding: '4px 0', 
+//       margin: 0,
+//       display: 'block'
+//     }}>
+//       {/* ============================================ */}
+//       {/* STORE HEADER - WITH EXTRA PADDING ON TOP */}
+//       {/* ============================================ */}
+//       <div style={{ 
+//         textAlign: 'center', 
+//         marginBottom: compact ? '6px' : '10px',
+//         paddingTop: compact ? '6px' : '12px',
+//         paddingBottom: compact ? '4px' : '8px',
+//         paddingLeft: '4px',
+//         paddingRight: '4px',
+//         width: '100%',
+//         overflow: 'visible',
+//         display: 'block'
+//       }}>
+//         <div style={{ 
+//           fontWeight: 'bold', 
+//           fontSize: nameFontSize,
+//           color: '#059669',
+//           width: '100%',
+//           overflow: 'visible',
+//           whiteSpace: 'normal',
+//           wordWrap: 'break-word',
+//           display: 'block',
+//           padding: '4px 8px',
+//           margin: '0 auto',
+//           lineHeight: '1.4',
+//           textAlign: 'center'
+//         }}>
+//           {storeName}
+//         </div>
+//         <div style={{ 
+//           fontSize: detailFontSize, 
+//           color: '#475569',
+//           marginTop: '3px',
+//           padding: '1px 4px',
+//           width: '100%',
+//           overflow: 'visible',
+//           whiteSpace: 'normal',
+//           wordWrap: 'break-word',
+//           display: 'block',
+//           textAlign: 'center'
+//         }}>
+//           {address}
+//         </div>
+//         <div style={{ 
+//           fontSize: detailFontSize, 
+//           color: '#475569',
+//           padding: '1px 4px',
+//           width: '100%',
+//           overflow: 'visible',
+//           whiteSpace: 'normal',
+//           wordWrap: 'break-word',
+//           display: 'block',
+//           textAlign: 'center'
+//         }}>
+//           Ph: {phone}
+//         </div>
+//         {gstin && (
+//           <div style={{ 
+//             fontSize: detailFontSize, 
+//             color: '#475569',
+//             padding: '1px 4px',
+//             width: '100%',
+//             overflow: 'visible',
+//             whiteSpace: 'normal',
+//             wordWrap: 'break-word',
+//             display: 'block',
+//             textAlign: 'center'
+//           }}>
+//             GSTIN: {gstin}
+//           </div>
+//         )}
+//         {fssai && (
+//           <div style={{ 
+//             fontSize: detailFontSize, 
+//             color: '#475569',
+//             padding: '1px 4px',
+//             width: '100%',
+//             overflow: 'visible',
+//             whiteSpace: 'normal',
+//             wordWrap: 'break-word',
+//             display: 'block',
+//             textAlign: 'center'
+//           }}>
+//             FSSAI: {fssai}
+//           </div>
+//         )}
+//       </div>
+      
+//       <div style={{ 
+//         borderTop: '1px dashed #cbd5e1', 
+//         margin: compact ? '4px 0' : '8px 0',
+//         paddingTop: compact ? '4px' : '8px',
+//         width: '100%'
+//       }} />
+
+//       {/* ============================================ */}
+//       {/* BILL INFO */}
+//       {/* ============================================ */}
+//       <div style={{ 
+//         fontSize: compact ? '9px' : '12px',
+//         width: '100%',
+//         overflow: 'visible',
+//         padding: '0 2px'
+//       }}>
+//         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap' }}>
+//           <span>Bill: <b>{bill?.billNumber || 'N/A'}</b></span>
+//           <span>Date: {bill?.createdAt ? new Date(bill.createdAt).toLocaleString() : 'N/A'}</span>
+//         </div>
+//         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap' }}>
+//           <span>Cashier: {bill?.cashier?.name || 'N/A'}</span>
+//           <span>Type: {bill?.orderType || 'N/A'}
+//             {bill?.order?.pickupCounter?.number && ` · C${bill.order.pickupCounter.number}`}
+//           </span>
+//         </div>
+//         {bill?.customer && (
+//           <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap' }}>
+//             <span>Customer: {bill.customer.name || 'N/A'}</span>
+//             <span>Phone: {bill.customer.phone || 'N/A'}</span>
+//           </div>
+//         )}
+//       </div>
+
+//       <div style={{ 
+//         borderTop: '1px dashed #cbd5e1', 
+//         margin: compact ? '4px 0' : '8px 0',
+//         paddingTop: compact ? '4px' : '8px',
+//         width: '100%'
+//       }} />
+
+//       {/* ============================================ */}
+//       {/* ITEMS TABLE */}
+//       {/* ============================================ */}
+//       <table style={{ 
+//         width: '100%', 
+//         borderCollapse: 'collapse',
+//         fontSize: tableFontSize,
+//         margin: 0,
+//         padding: 0,
+//         tableLayout: 'fixed'
+//       }}>
+//         <thead>
+//           <tr>
+//             <th style={{ 
+//               textAlign: 'left', 
+//               padding: '2px 6px',
+//               borderBottom: '1px dashed #cbd5e1',
+//               width: '50%',
+//               fontSize: compact ? '8px' : '11px'
+//             }}>Item</th>
+//             <th style={{ 
+//               textAlign: 'right', 
+//               padding: '2px 6px',
+//               borderBottom: '1px dashed #cbd5e1',
+//               width: '15%',
+//               fontSize: compact ? '8px' : '11px'
+//             }}>Qty</th>
+//             <th style={{ 
+//               textAlign: 'right', 
+//               padding: '2px 6px',
+//               borderBottom: '1px dashed #cbd5e1',
+//               width: '17%',
+//               fontSize: compact ? '8px' : '11px'
+//             }}>Rate</th>
+//             <th style={{ 
+//               textAlign: 'right', 
+//               padding: '2px 6px',
+//               borderBottom: '1px dashed #cbd5e1',
+//               width: '18%',
+//               fontSize: compact ? '8px' : '11px'
+//             }}>Amt</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {bill?.order?.items?.map((i: any) => (
+//             <tr key={i.id}>
+//               <td style={{ 
+//                 padding: '2px 6px',
+//                 textAlign: 'left',
+//                 wordWrap: 'break-word',
+//                 overflow: 'visible',
+//                 fontSize: compact ? '8px' : '11px'
+//               }}>
+//                 {i.name || 'Item'}
+//                 {i.groceryItem?.sku && (
+//                   <span style={{ fontSize: '7px', color: '#94a3b8', marginLeft: '4px' }}>
+//                     ({i.groceryItem.sku})
+//                   </span>
+//                 )}
+//               </td>
+//               <td style={{ 
+//                 padding: '2px 6px', 
+//                 textAlign: 'right',
+//                 fontSize: compact ? '8px' : '11px'
+//               }}>{i.quantity || 0}</td>
+//               <td style={{ 
+//                 padding: '2px 6px', 
+//                 textAlign: 'right',
+//                 fontSize: compact ? '8px' : '11px'
+//               }}>{formatINR(i.price || 0)}</td>
+//               <td style={{ 
+//                 padding: '2px 6px', 
+//                 textAlign: 'right',
+//                 fontSize: compact ? '8px' : '11px'
+//               }}>{formatINR((i.price || 0) * (i.quantity || 0))}</td>
+//             </tr>
+//           ))}
+//         </tbody>
+//       </table>
+
+//       <div style={{ 
+//         borderTop: '1px dashed #cbd5e1', 
+//         margin: compact ? '4px 0' : '8px 0',
+//         paddingTop: compact ? '4px' : '8px',
+//         width: '100%'
+//       }} />
+
+//       {/* ============================================ */}
+//       {/* TOTALS */}
+//       {/* ============================================ */}
+//       <div style={{ textAlign: 'right', width: '100%', padding: '0 2px' }}>
+//         <Row label="Subtotal" value={formatINR(bill?.subtotal || 0)} compact={compact} />
+//         {bill?.itemDiscount > 0 && <Row label="Item Disc" value={`− ${formatINR(bill.itemDiscount)}`} compact={compact} />}
+//         {bill?.billDiscount > 0 && <Row label="Bill Disc" value={`− ${formatINR(bill.billDiscount)}`} compact={compact} />}
+//         {bill?.cgst > 0 && <Row label="CGST" value={formatINR(bill.cgst)} compact={compact} />}
+//         {bill?.sgst > 0 && <Row label="SGST" value={formatINR(bill.sgst)} compact={compact} />}
+//         {bill?.packingCharge > 0 && <Row label="Packing" value={formatINR(bill.packingCharge)} compact={compact} />}
+//         {bill?.deliveryCharge > 0 && <Row label="Delivery" value={formatINR(bill.deliveryCharge)} compact={compact} />}
+//         {bill?.roundOff !== 0 && <Row label="Round Off" value={formatINR(bill.roundOff)} compact={compact} />}
+//         {bill?.couponDiscount > 0 && <Row label="Coupon" value={`− ${formatINR(bill.couponDiscount)}`} compact={compact} />}
+//         {bill?.loyaltyValue > 0 && <Row label="Loyalty" value={`− ${formatINR(bill.loyaltyValue)}`} compact={compact} />}
+        
+//         <div style={{ 
+//           borderTop: '1px dashed #cbd5e1', 
+//           marginTop: compact ? '4px' : '8px',
+//           paddingTop: compact ? '4px' : '8px',
+//           width: '100%'
+//         }} />
+//         <div style={{ 
+//           display: 'flex', 
+//           justifyContent: 'space-between',
+//           fontWeight: 'bold',
+//           fontSize: compact ? '12px' : '18px',
+//           width: '100%'
+//         }}>
+//           <span>TOTAL</span>
+//           <span>{formatINR(bill?.grandTotal || 0)}</span>
+//         </div>
+        
+//         <div style={{ 
+//           fontSize: compact ? '8px' : '11px', 
+//           marginTop: '4px',
+//           color: '#64748b',
+//           width: '100%'
+//         }}>
+//           Paid via {bill?.paymentMethod || 'N/A'}
+//           {bill?.paymentMethod === "SPLIT" && (
+//             <span>
+//               : Cash {formatINR(bill.paymentCash)} · UPI {formatINR(bill.paymentUpi)} · Card {formatINR(bill.paymentCard)}
+//               {bill.paymentOnline > 0 && ` · Online ${formatINR(bill.paymentOnline)}`}
+//             </span>
+//           )}
+//           {bill?.paymentMethod === "ONLINE" && `: ${formatINR(bill.paymentOnline)}`}
+//         </div>
+//       </div>
+
+//       <div style={{ 
+//         borderTop: '1px dashed #cbd5e1', 
+//         margin: compact ? '4px 0' : '8px 0',
+//         paddingTop: compact ? '4px' : '8px',
+//         width: '100%'
+//       }} />
+      
+//       {/* ============================================ */}
+//       {/* FOOTER */}
+//       {/* ============================================ */}
+//       <div style={{ 
+//         textAlign: 'center', 
+//         fontSize: compact ? '8px' : '12px',
+//         color: '#64748b',
+//         width: '100%',
+//         overflow: 'visible',
+//         padding: '4px 0'
+//       }}>
+//         {footer}
+//       </div>
+      
+//       {/* QR Code */}
+//       {settings?.paymentQrUrl && (
+//         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '8px', width: '100%' }}>
+//           <img src={settings.paymentQrUrl} alt="QR Code" style={{ 
+//             width: compact ? '40px' : '64px', 
+//             height: 'auto' 
+//           }} />
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
 
 // =============================================
 // ROW COMPONENT

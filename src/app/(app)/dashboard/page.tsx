@@ -35,7 +35,7 @@ export default function Dashboard() {
         <h1 className="text-2xl font-bold text-slate-800">Dashboard</h1>
         <div className="flex gap-2">
           <Link href="/pos" className="btn btn-primary">New Sale</Link>
-          <Link href="/products" className="btn btn-secondary">Products</Link>
+          {/* <Link href="/products" className="btn btn-secondary">Products</Link> */}
         </div>
       </div>
 
