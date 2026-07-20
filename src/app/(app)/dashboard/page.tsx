@@ -35,7 +35,7 @@ export default function Dashboard() {
         <h1 className="text-2xl font-bold text-slate-800">Dashboard</h1>
         <div className="flex gap-2">
           <Link href="/pos" className="btn btn-primary">New Sale</Link>
-          {/* <Link href="/products" className="btn btn-secondary">Products</Link> */}
+          <Link href="/menu" className="btn btn-secondary">Products</Link>
         </div>
       </div>
 
@@ -188,9 +188,9 @@ export default function Dashboard() {
         <div className="font-semibold text-slate-800 mb-3">Quick Actions</div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Link href="/pos" className="btn btn-primary text-center">New Sale</Link>
-          <Link href="/products" className="btn btn-secondary text-center">Manage Products</Link>
+          <Link href="/menu" className="btn btn-secondary text-center">Manage Products</Link>
           <Link href="/inventory" className="btn btn-secondary text-center">Inventory</Link>
-          <Link href="/suppliers" className="btn btn-secondary text-center">Suppliers</Link>
+          {/* <Link href="/suppliers" className="btn btn-secondary text-center">Suppliers</Link> */}
         </div>
       </div>
     </div>

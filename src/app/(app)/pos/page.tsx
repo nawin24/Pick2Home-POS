@@ -287,14 +287,28 @@ export default function GroceryPOSPage() {
       alert("Cart is empty!");
       return;
     }
-    
-    if (payment.method === "SPLIT") {
-      const sum = (payment.cash ?? 0) + (payment.upi ?? 0) + (payment.card ?? 0);
-      if (Math.abs(sum - computed.grandTotal) > 0.5) {
-        alert(`Split total ${formatINR(sum)} must equal grand total ${formatINR(computed.grandTotal)}`);
-        return;
-      }
-    }
+if (payment.method === "SPLIT") {
+  const sum =
+    (payment.cash ?? 0) +
+    (payment.upi ?? 0) +
+    (payment.card ?? 0);
+
+  const remaining = computed.grandTotal - sum;
+
+  if (Math.abs(remaining) > 0.5) {
+    alert(
+      `Remaining amount to split: ${formatINR(remaining)}`
+    );
+    return;
+  }
+}    
+    // if (payment.method === "SPLIT") {
+    //   const sum = (payment.cash ?? 0) + (payment.upi ?? 0) + (payment.card ?? 0);
+    //   if (Math.abs(sum - computed.grandTotal) > 0.5) {
+    //     alert(`Split total ${formatINR(sum)} must equal grand total ${formatINR(computed.grandTotal)}`);
+    //     return;
+    //   }
+    // }
     
     setSubmitting(true);
     try {
