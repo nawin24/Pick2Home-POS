@@ -98,9 +98,9 @@ export default function BillsPage() {
             <option value="REFUNDED">Refunded</option>
           </select>
         </label>
-        <button onClick={load} className="btn btn-primary h-[38px] flex items-center gap-2">
+        {/* <button onClick={load} className="btn btn-primary h-[38px] flex items-center gap-2">
           <Search size={16} /> Search
-        </button>
+        </button> */}
       </div>
 
       {/* Bills Table */}

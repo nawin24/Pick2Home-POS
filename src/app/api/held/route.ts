@@ -19,8 +19,7 @@ export async function POST(req: NextRequest) {
   const hold = await prisma.heldOrder.create({
     data: {
       note: b.note,
-      orderType: b.orderType ?? "DINEIN",
-      tableId: b.tableId,
+      orderType: b.orderType ?? "WALKIN",
       cartJson: JSON.stringify(b.cart ?? []),
       createdById: auth.user.sub,
     },
